@@ -19,7 +19,6 @@ jobs:
         run: |
           nix build
       - name: Archive iso image.
-        if: github.pull_request.merged
         uses: actions/upload-artifact@v2
         with:
           name: iso-${{ github.run_number }}
