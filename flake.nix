@@ -1,6 +1,6 @@
 {
   description = "Installer iso image for Telebox.";
-  inputs.nixos.url = "github:nixos/nixpkgs/nixos-unstable";
+  inputs.nixos.url = "github:nixos/nixpkgs/release-21.05";
   outputs = { self, nixos }: {
     defaultPackage."x86_64-linux" =
       with (import "${nixos}/nixos/lib/eval-config.nix") {
