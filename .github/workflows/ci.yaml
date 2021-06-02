@@ -22,4 +22,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: iso-${{ github.run_number }}
-          path: result/iso/*.iso
+          path: result/iso/nixos-*.iso
