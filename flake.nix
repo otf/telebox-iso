@@ -11,7 +11,8 @@
             systemd.services.installation = {
               description = "Installation";
               wantedBy = [ "multi-user.target" ];
-              after = [ "network.target" "polkit.service" ];
+              after = [ "getty.target" "network.target" ];
+              conflicts = [ "getty@tty1.service" ];
               script = with pkgs; ''
                 ${kmod}/bin/modprobe pcspkr
                 ${beep}/bin/beep -f 2000;
@@ -19,6 +20,12 @@
               '';
               serviceConfig = {
                 Type = "oneshot";
+                RemainAfterExit = "yes";
+                StarndardInput = "tty-force";
+                StarndardOutput = "inherit";
+                StarndardError = "inherit";
+                TTYReset = "yes";
+                TTYVHangup = "yes";
               };
             };
           })
