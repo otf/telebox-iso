@@ -8,7 +8,7 @@
           system = "x86_64-linux";
           modules = [
             "${nixos}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-            ({ pkgs, lib, ... }: rec {
+            ({ config, pkgs, lib, ... }: rec {
               isoImage.isoBaseName = "telebox";
               isoImage.volumeID = "TELEBOX_ISO";
 
@@ -18,9 +18,28 @@
                 after = [ "getty.target" "network.target" ];
                 conflicts = [ "getty@tty1.service" ];
                 script = with pkgs; ''
-                  ${kmod}/bin/modprobe pcspkr
-                  ${beep}/bin/beep -f 2000;
-                  ${beep}/bin/beep -f 1000;
+                  set -euxo pipefail
+
+                  # Partitioning
+                  wipefs -fa /dev/nvme0n1
+                  parted -s /dev/nvme0n1 -- mklabel gpt
+                  parted -s /dev/nvme0n1 -- mkpart ESP fat32 1MiB 512MiB
+                  parted -s /dev/nvme0n1 -- set 1 esp on
+                  parted -s /dev/nvme0n1 -- mkpart primary ext4 512MiB 100%
+
+                  # Formatting
+                  mkfs.ext4 -F -L nixos /dev/nvme0n1p2
+                  mkfs.fat -F 32 -n boot /dev/nvme0n1p1
+
+                  # Mount
+                  mount /dev/disk/by-label/nixos /mnt
+                  mkdir -p /mnt/boot
+                  mount /dev/disk/by-label/boot /mnt/boot
+
+                  # Install
+                  nixos-generate-config --root /mnt
+                  ${telebox.config.system.build.nixos-install}/bin/nixos-install --no-root-passwd
+                  reboot
                 '';
                 serviceConfig = {
                   Type = "oneshot";
@@ -30,6 +49,11 @@
                   StarndardError = "inherit";
                   TTYReset = "yes";
                   TTYVHangup = "yes";
+                };
+                path = [ "/run/current-system/sw" ];
+                environment = config.nix.envVars // {
+                  inherit (config.environment.sessionVariables) NIX_PATH;
+                  HOME = "/root";
                 };
               };
             })
