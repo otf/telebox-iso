@@ -15,7 +15,7 @@
               systemd.services.installation = {
                 description = "Installation";
                 wantedBy = [ "multi-user.target" ];
-                after = [ "getty.target" "network.target" ];
+                after = [ "getty.target" "nscd.service" ];
                 conflicts = [ "getty@tty1.service" ];
                 script = with pkgs; ''
                   set -euxo pipefail
