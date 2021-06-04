@@ -4,6 +4,8 @@
   outputs = { self, nixos }: {
     defaultPackage."x86_64-linux" = 
       let 
+        configFile = builtins.toFile "configuration.nix" (builtins.readFile ./config/configuration.nix);
+        hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./config/hardware-configuration.nix);
         telebox = (import "${nixos}/nixos/lib/eval-config.nix") {
           system = "x86_64-linux";
           modules = [
@@ -37,7 +39,9 @@
                   mount /dev/disk/by-label/boot /mnt/boot
 
                   # Install
-                  nixos-generate-config --root /mnt
+                  mkdir -p /mnt/etc/nixos
+                  cp ${configFile} /mnt/etc/nixos/configuration.nix
+                  cp ${hardwareConfigFile} /mnt/etc/nixos/hardware-configuration.nix
                   ${telebox.config.system.build.nixos-install}/bin/nixos-install --no-root-passwd
                   reboot
                 '';
