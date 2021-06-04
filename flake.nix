@@ -1,6 +1,6 @@
 {
   description = "Installer iso image for Telebox.";
-  inputs.nixos.url = "github:nixos/nixpkgs/nixos-20.09";
+  inputs.nixos.url = "github:nixos/nixpkgs/nixos-21.05";
   outputs = { self, nixos }: {
     defaultPackage."x86_64-linux" = 
       let 
