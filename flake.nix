@@ -1,15 +1,15 @@
 {
   description = "Installer iso image for Telebox.";
-  inputs.nixos.url = "github:nixos/nixpkgs/nixos-21.05-small";
-  outputs = { self, nixos }: {
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-21.05-small";
+  outputs = { self, nixpkgs }: {
     defaultPackage."x86_64-linux" = 
       let 
         configFile = builtins.toFile "configuration.nix" (builtins.readFile ./config/configuration.nix);
         hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./config/hardware-configuration.nix);
-        telebox = (import "${nixos}/nixos/lib/eval-config.nix") {
+        telebox = (import "${nixpkgs}/nixos/lib/eval-config.nix") {
           system = "x86_64-linux";
           modules = [
-            "${nixos}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
             ({ config, pkgs, lib, ... }: rec {
               isoImage.isoBaseName = "telebox";
               isoImage.volumeID = "TELEBOX_ISO";
