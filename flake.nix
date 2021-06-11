@@ -7,8 +7,8 @@
     in {
       defaultPackage.${system} = 
         let 
-          configFile = builtins.toFile "configuration.nix" (builtins.readFile ./config/configuration.nix);
-          hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./config/hardware-configuration.nix);
+          configFile = builtins.toFile "configuration.nix" (builtins.readFile ./modules/configuration.nix);
+          hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./modules/hardware-configuration.nix);
           telebox = (import "${nixpkgs}/nixos/lib/eval-config.nix") {
             inherit system;
             modules = [
