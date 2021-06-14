@@ -4,7 +4,11 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
     in {
+      checks.${system} = {
+        test-machine = pkgs.nixosTest (import tests/machine.nix);
+      };
       defaultPackage.${system} = 
         let 
           telebox = import "${nixpkgs}/nixos" {
