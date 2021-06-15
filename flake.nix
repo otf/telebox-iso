@@ -9,6 +9,12 @@
       checks.${system} = {
         test-machine = pkgs.nixosTest (import tests/machine.nix);
       };
+      nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./modules/configuration.nix
+        ];
+      };
       defaultPackage.${system} = 
         let 
           telebox = import "${nixpkgs}/nixos" {
