@@ -7,7 +7,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       checks.${system} = {
-        test-machine = pkgs.nixosTest (import tests/machine.nix);
+        test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
         test-bitwarden = pkgs.nixosTest (import tests/bitwarden.nix { inherit pkgs; });
       };
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
