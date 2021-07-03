@@ -17,7 +17,7 @@ jobs:
             experimental-features = nix-command flakes
       - name: Check flakes
         run: |
-          nix flake check
+          nix --print-build-logs --verbose flake check
       - name: Build
         run: |
           nix build
