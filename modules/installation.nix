@@ -32,6 +32,7 @@ in {
       mkdir -p /mnt/etc/nixos
       cp ${configFile} /mnt/etc/nixos/configuration.nix
       cp ${hardwareConfigFile} /mnt/etc/nixos/hardware-configuration.nix
+
       ${config.system.build.nixos-install}/bin/nixos-install --no-root-passwd
       reboot
     '';

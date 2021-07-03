@@ -4,8 +4,19 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ self.overlay ];
+      };
     in {
+      overlay = final: prev: {
+        bitwardenServerImages = import ./modules/bitwarden-server-images.nix {
+          inherit (pkgs.dockerTools) pullImage;
+        };
+      };
+      nixosModules = {
+        bitwardenServer = import ./modules/bitwarden-server.nix;
+      };
       checks.${system} = {
         test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
         test-bitwarden = pkgs.nixosTest (import tests/bitwarden.nix { inherit pkgs; });
@@ -18,16 +29,16 @@
       };
       defaultPackage.${system} = 
         let 
-          telebox = import "${nixpkgs}/nixos" {
+          telebox = nixpkgs.lib.nixosSystem {
             inherit system;
-            configuration = { pkgs, ...}: {
-              imports = [
-                "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-                ./modules/installation.nix
-              ];
-              isoImage.isoBaseName = "telebox";
-              isoImage.volumeID = "TELEBOX_ISO";
-            };
+            modules = [
+              "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+              ./modules/installation.nix
+              ({ pkgs, ...}: {
+                isoImage.isoBaseName = "telebox";
+                isoImage.volumeID = "TELEBOX_ISO";
+              })
+            ];
           };
         in
           telebox.config.system.build.isoImage;
