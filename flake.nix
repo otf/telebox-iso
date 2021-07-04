@@ -19,7 +19,7 @@
       };
       checks.${system} = {
         test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
-        test-bitwarden = pkgs.nixosTest (import tests/bitwarden.nix { inherit pkgs; });
+        test-bitwarden-server = pkgs.nixosTest (import tests/bitwarden-server.nix { inherit pkgs; });
       };
       nixosConfigurations = {
         # Used with `nixos-rebuild switch --flake .#machine`
