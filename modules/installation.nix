@@ -4,6 +4,9 @@ let
   configFile = builtins.toFile "configuration.nix" (builtins.readFile ./configuration.nix);
   hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./hardware-configuration.nix);
 in {
+  isoImage.isoBaseName = "telebox";
+  isoImage.volumeID = "TELEBOX_ISO";
+
   systemd.services.installation = {
     description = "Installation";
     wantedBy = [ "multi-user.target" ];

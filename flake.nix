@@ -21,30 +21,26 @@
         test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
         test-bitwarden = pkgs.nixosTest (import tests/bitwarden.nix { inherit pkgs; });
       };
-      # Used with `nixos-rebuild switch --flake .#machine`
-      nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [
-          { nixpkgs.overlays = [ self.overlay ]; }
-          ./modules/configuration.nix
-          self.nixosModules.bitwardenServer
-        ];
+      nixosConfigurations = {
+        # Used with `nixos-rebuild switch --flake .#machine`
+        machine = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            { nixpkgs.overlays = [ self.overlay ]; }
+            ./modules/configuration.nix
+            self.nixosModules.bitwardenServer
+          ];
+        };
+        installer = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            ./modules/installation.nix
+          ];
+        };
       };
       defaultPackage.${system} = 
-        let 
-          telebox = nixpkgs.lib.nixosSystem {
-            inherit system;
-            modules = [
-              "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-              ./modules/installation.nix
-              ({ pkgs, ...}: {
-                isoImage.isoBaseName = "telebox";
-                isoImage.volumeID = "TELEBOX_ISO";
-              })
-            ];
-          };
-        in
-          telebox.config.system.build.isoImage;
+        self.nixosConfigurations.installer.config.system.build.isoImage;
     };
 }
 
