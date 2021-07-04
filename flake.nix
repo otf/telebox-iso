@@ -21,10 +21,13 @@
         test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
         test-bitwarden = pkgs.nixosTest (import tests/bitwarden.nix { inherit pkgs; });
       };
+      # Used with `nixos-rebuild switch --flake .#machine`
       nixosConfigurations.machine = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          { nixpkgs.overlays = [ self.overlay ]; }
           ./modules/configuration.nix
+          self.nixosModules.bitwardenServer
         ];
       };
       defaultPackage.${system} = 
