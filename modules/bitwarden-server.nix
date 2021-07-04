@@ -3,6 +3,9 @@
 with lib;
 
 let
+  bitwardenServerImages = import ./bitwarden-server-images.nix {
+    inherit (pkgs.dockerTools) pullImage;
+  };
   cfg = config.services.bitwardenServer;
   coreVersion = "1.41.4";
   webVersion = "2.21.0";
@@ -381,7 +384,7 @@ in {
     virtualisation.oci-containers.containers = {
       bitwarden-mssql =  {
         image = "bitwarden/mssql:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.mssql;
+        imageFile = bitwardenServerImages.mssql;
         volumes = [
           "/var/opt/mssql/data:/var/opt/mssql/data"
           "/var/opt/bitwarden/logs/mssql:/var/opt/mssql/log"
@@ -399,7 +402,7 @@ in {
 
       bitwarden-web =  {
         image = "bitwarden/web:${webVersion}";
-        imageFile = pkgs.bitwardenServerImages.web;
+        imageFile = bitwardenServerImages.web;
         volumes = [
           "/etc/bitwarden/web:/etc/bitwarden/web"
         ];
@@ -415,7 +418,7 @@ in {
 
       bitwarden-attachments =  {
         image = "bitwarden/attachments:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.attachments;
+        imageFile = bitwardenServerImages.attachments;
         volumes = [
           "/var/opt/bitwarden/core/attachments:/etc/bitwarden/core/attachments"
         ];
@@ -431,7 +434,7 @@ in {
 
       bitwarden-api =  {
         image = "bitwarden/api:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.api;
+        imageFile = bitwardenServerImages.api;
         volumes = [
           "/var/opt/bitwarden/core:/etc/bitwarden/core"
           "/var/opt/bitwarden/logs/api:/etc/bitwarden/logs"
@@ -449,7 +452,7 @@ in {
 
       bitwarden-identity =  {
         image = "bitwarden/identity:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.identity;
+        imageFile = bitwardenServerImages.identity;
         volumes = [
           "/etc/bitwarden/identity:/etc/bitwarden/identity"
           "/var/opt/bitwarden/core:/etc/bitwarden/core"
@@ -468,7 +471,7 @@ in {
 
       bitwarden-sso =  {
         image = "bitwarden/sso:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.sso;
+        imageFile = bitwardenServerImages.sso;
         volumes = [
           "${identityCertificate}/ssl:/etc/bitwarden/identity"
           "/var/opt/bitwarden/core:/etc/bitwarden/core"
@@ -487,7 +490,7 @@ in {
 
       bitwarden-admin =  {
         image = "bitwarden/admin:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.admin;
+        imageFile = bitwardenServerImages.admin;
         dependsOn = [
           "bitwarden-mssql"
         ];
@@ -508,7 +511,7 @@ in {
 
       bitwarden-portal =  {
         image = "bitwarden/portal:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.portal;
+        imageFile = bitwardenServerImages.portal;
         dependsOn = [
           "bitwarden-mssql"
         ];
@@ -529,7 +532,7 @@ in {
 
       bitwarden-icons =  {
         image = "bitwarden/icons:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.icons;
+        imageFile = bitwardenServerImages.icons;
         volumes = [
           "/var/opt/bitwarden/logs/icons:/etc/bitwarden/logs"
         ];
@@ -545,7 +548,7 @@ in {
 
       bitwarden-notifications =  {
         image = "bitwarden/notifications:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.notifications;
+        imageFile = bitwardenServerImages.notifications;
         volumes = [
           "/var/opt/bitwarden/logs/notifications:/etc/bitwarden/logs"
         ];
@@ -562,7 +565,7 @@ in {
 
       bitwarden-events =  {
         image = "bitwarden/events:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.events;
+        imageFile = bitwardenServerImages.events;
         volumes = [
           "/var/opt/bitwarden/logs/events:/etc/bitwarden/logs"
         ];
@@ -579,7 +582,7 @@ in {
 
       bitwarden-nginx =  {
         image = "bitwarden/nginx:${coreVersion}";
-        imageFile = pkgs.bitwardenServerImages.nginx;
+        imageFile = bitwardenServerImages.nginx;
         dependsOn = [
           "bitwarden-web"
           "bitwarden-admin"

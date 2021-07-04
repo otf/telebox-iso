@@ -6,14 +6,8 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ self.overlay ];
       };
     in {
-      overlay = final: prev: {
-        bitwardenServerImages = import ./modules/bitwarden-server-images.nix {
-          inherit (pkgs.dockerTools) pullImage;
-        };
-      };
       nixosModules = {
         bitwardenServer = import ./modules/bitwarden-server.nix;
       };
@@ -26,7 +20,6 @@
         machine = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
-            { nixpkgs.overlays = [ self.overlay ]; }
             ./modules/configuration.nix
             self.nixosModules.bitwardenServer
           ];
