@@ -3,6 +3,8 @@
 let
   configFile = builtins.toFile "configuration.nix" (builtins.readFile ./configuration.nix);
   hardwareConfigFile = builtins.toFile "hardware-configuration.nix" (builtins.readFile ./hardware-configuration.nix);
+  bitwardenServerModuleFile = builtins.toFile "bitwarden-server.nix" (builtins.readFile ./bitwarden-server.nix);
+  bitwardenServerImagesFile = builtins.toFile "bitwarden-server-images.nix" (builtins.readFile ./bitwarden-server-images.nix);
 in {
   isoImage.isoBaseName = "telebox";
   isoImage.volumeID = "TELEBOX_ISO";
@@ -35,6 +37,8 @@ in {
       mkdir -p /mnt/etc/nixos
       cp ${configFile} /mnt/etc/nixos/configuration.nix
       cp ${hardwareConfigFile} /mnt/etc/nixos/hardware-configuration.nix
+      cp ${bitwardenServerModuleFile} /mnt/etc/nixos/bitwarden-server.nix
+      cp ${bitwardenServerImagesFile} /mnt/etc/nixos/bitwarden-server-images.nix
 
       ${config.system.build.nixos-install}/bin/nixos-install --no-root-passwd
       reboot

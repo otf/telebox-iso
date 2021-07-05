@@ -8,9 +8,6 @@
         inherit system;
       };
     in {
-      nixosModules = {
-        bitwardenServer = import ./modules/bitwarden-server.nix;
-      };
       checks.${system} = {
         test-machine = pkgs.nixosTest (import tests/machine.nix { inherit pkgs; });
         test-bitwarden-server = pkgs.nixosTest (import tests/bitwarden-server.nix { inherit pkgs; });
@@ -21,7 +18,6 @@
           inherit system;
           modules = [
             ./modules/configuration.nix
-            self.nixosModules.bitwardenServer
           ];
         };
         installer = nixpkgs.lib.nixosSystem {
