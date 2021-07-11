@@ -24,14 +24,26 @@ in {
       parted -s /dev/nvme0n1 -- set 1 esp on
       parted -s /dev/nvme0n1 -- mkpart primary ext4 512MiB 100%
 
+      # Create a RAID volume.
+      mdadm --create /dev/md/imsm /dev/sd[a-b] --raid-devices 2 -e imsm
+      mdadm --create /dev/md/md0 /dev/md/imsm --raid-devices 2 --level raid1 --assume-clean
+
       # Formatting
       mkfs.ext4 -F -L nixos /dev/nvme0n1p2
       mkfs.fat -F 32 -n boot /dev/nvme0n1p1
+      mkfs.ext4 -F -L backups /dev/md/md0
 
       # Mount
       mount /dev/disk/by-label/nixos /mnt
       mkdir -p /mnt/boot
       mount /dev/disk/by-label/boot /mnt/boot
+      mkdir -p /mnt/mnt/hdd
+      mount /dev/disk/by-label/backups /mnt/mnt/hdd
+
+      # Create a symlink for MSSQL backups.
+      mkdir -p /mnt/var/opt/mssql
+      mkdir -p /mnt/mnt/hdd/var/opt/mssql/backups
+      ln -s /mnt/hdd/var/opt/mssql/backups /mnt/var/opt/mssql/backups
 
       # Install
       mkdir -p /mnt/etc/nixos

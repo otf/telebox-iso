@@ -20,6 +20,11 @@
       fsType = "vfat";
     };
 
+  fileSystems."/mnt/hdd" =
+    { device = "/dev/disk/by-label/backups";
+      fsType = "ext4";
+    };
+
   swapDevices = [ ];
 
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
